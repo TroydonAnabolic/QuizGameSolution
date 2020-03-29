@@ -16,6 +16,8 @@ namespace QuizGame
                 PlayGameMethods playGameMethods = new PlayGameMethods();
                 CSharpQuestionAndAnswer cSharpQuestionAndAnswer = new CSharpQuestionAndAnswer();
                 GeneralKnowledge generalKnowledge = new GeneralKnowledge();
+                CustomGame customGame = new CustomGame();
+
                 bool continueQuizGames = false;
                 do
                 {
@@ -25,7 +27,7 @@ namespace QuizGame
 
                     if (shouldPlay.Equals("Y", StringComparison.OrdinalIgnoreCase))
                     {
-                        playGameMethods.PlayGame(cSharpQuestionAndAnswer, generalKnowledge, calculation);
+                        playGameMethods.PlayGame(cSharpQuestionAndAnswer, generalKnowledge, customGame, calculation);
                         continueQuizGames = true;
                     }
                     // Immediately exit app if we do not want to continue
@@ -45,7 +47,7 @@ namespace QuizGame
             }
             catch (Exception ex)
             {
-                Console.WriteLine("There was an error" + ex.Message);
+                Console.WriteLine("There was an error: " + ex.Message);
             }
         }
     }

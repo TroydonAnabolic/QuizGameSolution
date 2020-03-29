@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace QuizGame.Engines
 {
     public class CalculationEngine
     {
-
-
         public void CalculateScore(
             List<string> argQuestions, List<string> argAnswerListCorrect, List<string> argAnswerListIncorrect1,
             List<string> argAnswerListIncorrect2, List<string> argAnswerListIncorrect3
@@ -15,7 +14,7 @@ namespace QuizGame.Engines
             try
             {
                 Random rnd = new Random();
-                int correctOption = 0, mySelectedOption = 0, selectIndicator = 0;
+                int correctOption = 0, mySelectedOption = 0;
                 double score = 0, percentage = 0;
                 string face = string.Empty, grade = string.Empty;
                 bool isEmptyAnswer = false;
@@ -27,13 +26,12 @@ namespace QuizGame.Engines
 
                 for (int i = 0; i < argQuestions.Count; i++)
                 {
-                    Console.WriteLine($"Question {i + 1}: {argQuestions[randomListForQuestions[i]]}"); // ask a question using the instance of the random list of numbers as the indexer
+                    Console.WriteLine($"\nQuestion {i + 1}: {argQuestions[randomListForQuestions[i]]}"); // ask a question using the instance of the random list of numbers as the indexer
                     Console.WriteLine("Enter '000' at any time to exit to the game selection menu");
 
                     // creates a list which will be possibly shuffled for each instance, so the answers location is constantly different so the user cannot pickup the pattern
                     List<string> possibleAnswers = new List<string>() { argAnswerListCorrect[randomListForQuestions[i]], argAnswerListIncorrect1[randomListForQuestions[i]],
                         argAnswerListIncorrect2[randomListForQuestions[i]], argAnswerListIncorrect3[randomListForQuestions[i]] };
-
                     // Creates a list of 4 random numbers in each instance of the questions list
                     List<int> randomList = new List<int>();
                     // after we have a random list of numbers 1-4, we use it to apply a random index between 1 and 4 to the list of possible answers 
@@ -47,35 +45,28 @@ namespace QuizGame.Engines
                         {
                             case 0:
                                 // print out proposed answer
-                                Console.WriteLine($"\nOption 1: {possibleAnswers[randomList[0]]}\n");
+                                Console.WriteLine($"\nOption {k + 1}: {possibleAnswers[randomList[0]]}\n");
                                 // if this instance is the correct answer then assign it correctOption with the corresponding value
-                                selectIndicator = 1;
                                 if (possibleAnswers[randomList[0]].Equals(argAnswerListCorrect[randomListForQuestions[i]])) correctOption = 1;
                                 // if not the correct answer and is null, we assign it as an empty answer
-                                else if (possibleAnswers[randomList[0]].Equals(string.Empty)) isEmptyAnswer = true;
+                                if (possibleAnswers[randomList[0]].Equals(string.Empty)) isEmptyAnswer = true;
                                 break;
                             case 1:
-                                Console.WriteLine($"Option 2: {possibleAnswers[randomList[1]]}\n");
-                                selectIndicator = 2;
-
+                                Console.WriteLine($"Option {k + 1} : {possibleAnswers[randomList[1]]}\n");
                                 if (possibleAnswers[randomList[1]].Equals(argAnswerListCorrect[randomListForQuestions[i]])) correctOption = 2;
-                                else if (possibleAnswers[randomList[1]].Equals(string.Empty)) isEmptyAnswer = true;
+                                if (possibleAnswers[randomList[1]].Equals(string.Empty)) isEmptyAnswer = true;
 
                                 break;
                             case 2:
-                                Console.WriteLine($"Option 3: {possibleAnswers[randomList[2]]}\n");
-                                selectIndicator = 3;
-
+                                Console.WriteLine($"Option {k + 1}: {possibleAnswers[randomList[2]]}\n");
                                 if (possibleAnswers[randomList[2]].Equals(argAnswerListCorrect[randomListForQuestions[i]])) correctOption = 3;
-                                else if (possibleAnswers[randomList[2]].Equals(string.Empty)) isEmptyAnswer = true;
+                                if (possibleAnswers[randomList[2]].Equals(string.Empty)) isEmptyAnswer = true;
 
                                 break;
                             case 3:
-                                Console.WriteLine($"Option 4: {possibleAnswers[randomList[3]]}\n");
-                                selectIndicator = 4;
-
+                                Console.WriteLine($"Option {k + 1}: {possibleAnswers[randomList[3]]}\n");
                                 if (possibleAnswers[randomList[3]].Equals(argAnswerListCorrect[randomListForQuestions[i]])) correctOption = 4;
-                                else if (possibleAnswers[randomList[3]].Equals(string.Empty)) isEmptyAnswer = true;
+                                if (possibleAnswers[randomList[3]].Equals(string.Empty)) isEmptyAnswer = true;
 
                                 break;
                         }
@@ -95,14 +86,39 @@ namespace QuizGame.Engines
                     // if its not the correct option but one of the other options available, incorrect option can only have the values that correct option does not and can only be 1 2 3 or 4
                     else if (AnswerOptions(mySelectedOption))
                     {
+                        // if the selected answer is empty
                         if (isEmptyAnswer)
                         {
-                            Console.WriteLine($"Sorry the answer you selected currently has no value, please select one of the current valid options: " +
-                                // using ?? to decide which items to display on the console
-                                $"{possibleAnswers[randomList[0]]} {possibleAnswers[randomList[1]]} {possibleAnswers[randomList[3]]} {possibleAnswers[randomList[4]]}");
-                            i--; // go back to some quetion
+                            Console.WriteLine($"\nSorry the answer you selected currently has no value, please select one of the current valid options:\n");
+                            // go through the whole list
+                            for (int j = 0; j < possibleAnswers.Count; j++)
+                            {
+                                switch (j)
+                                {
+                                    case 0:
+                                        if (!(possibleAnswers[randomList[0]] == string.Empty)) // for each item in the shuffled list print the option only if not null
+                                            Console.WriteLine($"Option 1");
+                                        break;
+                                    case 1:
+                                        if (!(possibleAnswers[randomList[1]] == string.Empty)) // for each item in the shuffled list print the option
+                                            Console.WriteLine($"Option: 2");
+                                        break;
+                                    case 2:
+                                        if (!(possibleAnswers[randomList[2]] == string.Empty)) // for each item in the shuffled list print the option
+                                            Console.WriteLine($"Option: 3");
+                                        break;
+                                    case 3:
+                                        if (!(possibleAnswers[randomList[3]] == string.Empty)) // for each item in the shuffled list print the option
+                                            Console.WriteLine($"Option: 4");
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                            i--; // go back to the same quetion
                             continue;
                         }
+                        // if the string is not empty the selected option is valid but answer incorrect
                         else
                             Console.WriteLine($"{Constants.horizontalRule}Sorry that is incorrect, your current score is: {score} out of {argQuestions.Count}{Constants.horizontalRule}");
                     }
@@ -119,52 +135,53 @@ namespace QuizGame.Engines
                     else if (mySelectedOption == 000)
                     {
                         i = argQuestions.Count;
-                        Console.WriteLine($"You have exited from the {PlayGameMethods.selectGame.ToUpper()} game");
+                        Console.WriteLine($"{Constants.horizontalRule}You have exited from the {PlayGameMethods.selectGame.ToUpper()} game{Constants.horizontalRule}");
                     }
-                    // if we have an empty answer, and it is any one of the selectd options
-                    //else if (AnswerOptions(mySelectedOption) && isEmptyAnswer)
-                    //{
-
-                    //}
                     else
                     {
                         Console.WriteLine("Sorry that is an invalid option, please select a number between 1 2 3 4, if you are unsure, select 9 for a hint, you will loose 0.5 points\n");
                         i--;
                         continue;
                     }
-                    // if a user selects
                 }
-                percentage = score / argQuestions.Count * 100;
-                if (percentage > 90) face = ":))";
-                else if (percentage > 50) face = ":)";
-                else face = ":(";
-
-                if (percentage >= 96.50) grade = "A+";
-                else if (percentage < 96.50 && percentage >= 92.5) grade = "A";
-                else if (percentage < 92.5 && percentage >= 89.5) grade = "A-";
-                else if (percentage < 89.5 && percentage >= 86.5) grade = "B+";
-                else if (percentage < 86.5 && percentage >= 82.5) grade = "B";
-                else if (percentage < 82.5 && percentage >= 79.5) grade = "B-";
-                else if (percentage < 79.5 && percentage >= 76.5) grade = "C+";
-                else if (percentage < 76.5 && percentage >= 72.5) grade = "C";
-                else if (percentage < 72.5 && percentage >= 69.5) grade = "C-";
-                else if (percentage < 69.5 && percentage >= 66.5) grade = "D+";
-                else if (percentage < 66.5 && percentage >= 62.5) grade = "D";
-                else if (percentage < 62.5 && percentage >= 59.5) grade = "D-";
-                else if (percentage < 59.5) grade = "F";
-
-                // if we did not manually exit the game do not print the game over option
-                if (mySelectedOption != 000)
-                {
-                    Console.WriteLine($"{Constants.horizontalRule}{Constants.horizontalRule}" +
-                        $"Game Over! Your final Score is: {score} out of {argQuestions.Count}! Your achieved a mark of {percentage}%, Your Grade is: {grade} {face}" +
-                        $"{Constants.horizontalRule}{Constants.horizontalRule}");
-                }
+                grade = DetermineGrade(argQuestions, mySelectedOption, score, out percentage, out face, grade);
             }
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
+        }
+
+        private static string DetermineGrade(List<string> argQuestions, int mySelectedOption, double score, out double percentage, out string face, string grade)
+        {
+            percentage = score / argQuestions.Count * 100;
+            if (percentage > 90) face = ":))";
+            else if (percentage > 50) face = ":)";
+            else face = ":(";
+
+            if (percentage >= 96.50) grade = "A+";
+            else if (percentage < 96.50 && percentage >= 92.5) grade = "A";
+            else if (percentage < 92.5 && percentage >= 89.5) grade = "A-";
+            else if (percentage < 89.5 && percentage >= 86.5) grade = "B+";
+            else if (percentage < 86.5 && percentage >= 82.5) grade = "B";
+            else if (percentage < 82.5 && percentage >= 79.5) grade = "B-";
+            else if (percentage < 79.5 && percentage >= 76.5) grade = "C+";
+            else if (percentage < 76.5 && percentage >= 72.5) grade = "C";
+            else if (percentage < 72.5 && percentage >= 69.5) grade = "C-";
+            else if (percentage < 69.5 && percentage >= 66.5) grade = "D+";
+            else if (percentage < 66.5 && percentage >= 62.5) grade = "D";
+            else if (percentage < 62.5 && percentage >= 59.5) grade = "D-";
+            else if (percentage < 59.5) grade = "F";
+
+            // if we did not manually exit the game do not print the game over option
+            if (mySelectedOption != 000)
+            {
+                Console.WriteLine($"{Constants.horizontalRule}{Constants.horizontalRule}" +
+                    $"Game Over! Your final Score is: {score} out of {argQuestions.Count}! Your achieved a mark of {percentage}%, Your Grade is: {grade} {face}" +
+                    $"{Constants.horizontalRule}{Constants.horizontalRule}");
+            }
+
+            return grade;
         }
 
         private static bool AnswerOptions(int mySelectedOption)

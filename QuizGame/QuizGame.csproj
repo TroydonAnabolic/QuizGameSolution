@@ -9,4 +9,8 @@
     <Folder Include="AllQuizzes\NetworkingQuizzes\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="System.Security.Principal.Windows" Version="4.7.0" />
+  </ItemGroup>
+
 </Project>

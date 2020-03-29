@@ -12,51 +12,70 @@ namespace QuizGame.Engines
     public class PlayGameMethods
     {
         // when adding to this list, always enter item just before EXIT element
-        public static readonly IList<string> gameList = new List<string> { "HTML", "CSS", "JAVASCRIPT", "C#", "ASP.NET", "SQL", "NETWORKING", "GENERAL", "FILE", "EXIT" }.AsReadOnly();
         public static string selectGame = string.Empty;
 
         public void PlayGame(CSharpQuestionAndAnswer argCsharp, GeneralKnowledge argGeneralKnowledge, CustomGame argCustomGame, CalculationEngine argCalculation)
         {
-            // TODO: Implement option to select a filePath for a txt file of the user, then use readLines, read all paragraphs separated by title of paragraph,
-            //logic should be if a line contains("Question List")("CorrectAnswer List") etc. then ignore that line. Count the number of lines then divide it by 5 and minus 5 to exclude titles.
-            //Also generate a file output to save to the users computer to show setup style sample
             bool exitToMenu = false;
+            string selectCustomOrBuiltIn = string.Empty;
+            IList<string> gameList = new List<string> { "HTML", "CSS", "JAVASCRIPT", "C#", "ASP.NET", "SQL", "NETWORKING", "GENERAL", "EXIT" };
+
+            do
+            {
+                Console.WriteLine("Would you like to use add a custom game or use a default game? 'Y' for custom or 'N' for built in");
+                selectCustomOrBuiltIn = Console.ReadLine() ?? string.Empty;
+                // if we select to use a custom game we prompt for the game name
+                if (selectCustomOrBuiltIn.Equals("Y", StringComparison.OrdinalIgnoreCase))
+                {
+                    Console.WriteLine("Please name your game");
+                    gameList.Add(Console.ReadLine() ?? string.Empty);
+                    break;
+                }
+                else if (selectCustomOrBuiltIn.Equals("N", StringComparison.OrdinalIgnoreCase))
+                {
+                    break;
+                }
+
+            } while (CustomGame.NotYesOrNO(selectCustomOrBuiltIn));
+
             do 
             {
                 Console.WriteLine($"Select the game you wish to play: " +
-                    $"{gameList[0]} {gameList[1]} {gameList[2]} {gameList[3]} {gameList[4]} {gameList[5]} {gameList[6]} {gameList[7]} {gameList[8]}. Type {gameList[9]} to return to main menu");
+                    $"{gameList[0]}, {gameList[1]}, {gameList[2]}, {gameList[3]}, {gameList[4]}, {gameList[5]}, {gameList[6]}, {gameList[7]} MYGAME" + // last element will be the name of the game
+                    $". Type EXIT to return to main menu");
                 selectGame = Console.ReadLine() ?? string.Empty;
 
                 switch (selectGame.ToUpper())
                 {
                     case "HTML":
-                        Console.WriteLine($"{Constants.horizontalRule}Welcome to the {gameList[0]} Game!");
+                        Console.WriteLine($"{Constants.horizontalRule}Welcome to the {gameList[0]} Game!\n");
                         break;
                     case "CSS":
-                        Console.WriteLine($"{Constants.horizontalRule}Welcome to the {gameList[1]} Game!");
+                        Console.WriteLine($"{Constants.horizontalRule}Welcome to the {gameList[1]} Game!\n");
                         break;
                     case "JAVASCRIPT":
-                        Console.WriteLine($"{Constants.horizontalRule}Welcome to the {gameList[2]} Game!");
+                        Console.WriteLine($"{Constants.horizontalRule}Welcome to the {gameList[2]} Game!\n");
                         break;
                     case "C#":
-                        Console.WriteLine($"{Constants.horizontalRule}Welcome to the {gameList[3]} Game!");
+                        Console.WriteLine($"{Constants.horizontalRule}Welcome to the {gameList[3]} Game!\n");
                         PlayCsharpGame(argCsharp, argCalculation);
                         break;
                     case "ASP.NET":
-                        Console.WriteLine($"{Constants.horizontalRule}Welcome to the {gameList[4]} Game!");
+                        Console.WriteLine($"{Constants.horizontalRule}Welcome to the {gameList[4]} Game\n!");
                         break;
                     case "SQL":
-                        Console.WriteLine($"{Constants.horizontalRule}Welcome to the {gameList[5]} Game!");
+                        Console.WriteLine($"{Constants.horizontalRule}Welcome to the {gameList[5]} Game!\n");
                         break;
                     case "NETWORKING":
-                        Console.WriteLine($"{Constants.horizontalRule}Welcome to the {gameList[6]} Game!");
+                        Console.WriteLine($"{Constants.horizontalRule}Welcome to the {gameList[6]} Game!\n");
                         break;
                     case "GENERAL":
-                        Console.WriteLine($"{Constants.horizontalRule}Welcome to the {gameList[7]}  Game!");
+                        Console.WriteLine($"{Constants.horizontalRule}Welcome to the {gameList[7]}  Game!\n"); // custom always last
                         PlayGeneralKnowledgeGame(argGeneralKnowledge, argCalculation);
                         break;
-                    case "FILE":
-                        Console.WriteLine($"{Constants.horizontalRule}Welcome to your (game name goes here)  Game!");
+
+                    case "MYGAME":
+                        Console.WriteLine($"{Constants.horizontalRule}Welcome to your {gameList[gameList.Count - 1]}  Game!\n");
                         PlayCustomGame(argCustomGame, argCalculation);
 
                         break;

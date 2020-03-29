@@ -43,6 +43,28 @@ namespace QuizGame.AllQuizzes.MiscellaneousQuizzes
                         "This is the first incorrect answer",
                         "This is the second incorrect answer",
                         "This is the third incorrect answer",
+
+                        "Alternatively your file can seperate each content you want to seperate with empty lines as below:","",
+                       "","Question List",
+                       "","This is our first question",
+                       "","This is our second question",
+                       "","This is our third question",
+                       "","Correct Answer List",
+                       "","This is the first correct answer",
+                       "","This is the second correct answer",
+                       "","This is the third correct answer",
+                       "","Incorrect Answer List 1 (do not add what is in this bracket - has the be the answers that make the second most sense so it can remain when the user selects hint",
+                       "","This is the first incorrect answer",
+                       "","This is the second incorrect answer",
+                       "","This is the third incorrect answer",
+                       "","Incorrect Answer List 2",
+                       "","This is the first incorrect answer",
+                       "","This is the second incorrect answer",
+                       "","This is the third incorrect answer",
+                       "","Incorrect Answer List 3",
+                       "","This is the first incorrect answer",
+                       "","This is the second incorrect answer",
+                       "","This is the third incorrect answer",
                     };
 
                 //string defaultSavePath = $@"C:\Users\{Environment.UserName}\QuizFolder\QuizSample.txt";
@@ -99,25 +121,48 @@ namespace QuizGame.AllQuizzes.MiscellaneousQuizzes
                 // store all lines into an array and make it into a list
                 string[] fileContents = File.ReadAllLines(readFilePath);
 
+                // for splits on spaces
                 string fileText = File.ReadAllText(readFilePath);
+                string[] splitTextOnSpace = fileText.Split(new string[] { "\r\n\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+                List<string> contentList = new List<string>();
+                string contentOptionSelected = string.Empty;
 
-                string[] splitText = fileText.Split(new string[] { "\r\n\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+                do
+                {
+                    // now chose the option if we want space seperator or no spaces
+                    Console.WriteLine("If you chose a file with spaces to seperate content enter 'Y' otherwise select 'N'");
+                    contentOptionSelected = Console.ReadLine() ?? string.Empty;
+                    // if we selected Y then we use the 
+                    if (contentOptionSelected.Equals("Y", StringComparison.OrdinalIgnoreCase))
+                    {
+                        foreach (var item in splitTextOnSpace)
+                        {
+                            contentList.Add(item);
+                        }
+                    }
+                    else if (contentOptionSelected.Equals("N", StringComparison.OrdinalIgnoreCase))
 
-                List<string> contentList = new List<string>(fileContents);
+                    {
+                        foreach (var item in fileContents)
+                        {
+                            contentList.Add(item);
+                        }
+                    }
+                    else Console.WriteLine("Invalid response, select Y or N");
 
-                 questionsList = new List<string>();
-                 answerListCorrect = new List<string>();
-                 answerListIncorrect1 = new List<string>();
-                 answerListIncorrect2 = new List<string>();
-                 answerListIncorrect3 = new List<string>();
+                    if ((contentOptionSelected.Equals("Y", StringComparison.OrdinalIgnoreCase)) || (contentOptionSelected.Equals("N", StringComparison.OrdinalIgnoreCase))) break;
+
+                } while (NotYesOrNO(contentOptionSelected));
+
+                questionsList = new List<string>();
+                answerListCorrect = new List<string>();
+                answerListIncorrect1 = new List<string>();
+                answerListIncorrect2 = new List<string>();
+                answerListIncorrect3 = new List<string>();
 
                 // take the list and now we can break it down into compartments
                 for (int i = 0; i < contentList.Count; i++)
                 {
-                    // we can establish question numbers by dividing by 5 and then minusing 5 because there 4 columns: Questions, Correct Answer, Incorrect answer 1, Incorrect answer 2 Incorrect Answer 3
-                    // Therefore there are 5 lists and 5 headings so we only want 1 of the list minus the headings to get the question count, we minus by 1 because we already divided by 5
-                    int numberOfQuestions = contentList.Count / 5 - 1;
-
                     // we add to the corresponding list depending on the indexes it falls between TODO: check if we leave questions null for some, and implement fix if possible
                     if (i >= 1 && i < contentList.IndexOf("Correct Answer List"))
                     {
@@ -136,7 +181,7 @@ namespace QuizGame.AllQuizzes.MiscellaneousQuizzes
                     {
                         answerListIncorrect2.Add(contentList[i]);
                     }
-                    else if (i > contentList.IndexOf("Incorrect Answer List 3") && i < contentList.Count - 1)
+                    else if (i > contentList.IndexOf("Incorrect Answer List 3") && i < contentList.Count)
                     {
                         answerListIncorrect3.Add(contentList[i]);
                     }
@@ -147,6 +192,11 @@ namespace QuizGame.AllQuizzes.MiscellaneousQuizzes
             {
                 throw new Exception(ex.Message);
             }
+        }
+
+        public static bool NotYesOrNO(string contentOptionSelected)
+        {
+            return !(contentOptionSelected.Equals("Y", StringComparison.OrdinalIgnoreCase)) || !(contentOptionSelected.Equals("N", StringComparison.OrdinalIgnoreCase));
         }
 
         private static string UseDefaultSaveMethod(string[] lines)

@@ -16,32 +16,18 @@ namespace QuizGame.Engines
 
         public void PlayGame(CSharpQuestionAndAnswer argCsharp, GeneralKnowledge argGeneralKnowledge, CustomGame argCustomGame, CalculationEngine argCalculation)
         {
-            bool exitToMenu = false;
+            bool exitToMenu = false, customSelected = false;
             string selectCustomOrBuiltIn = string.Empty;
             IList<string> gameList = new List<string> { "HTML", "CSS", "JAVASCRIPT", "C#", "ASP.NET", "SQL", "NETWORKING", "GENERAL", "EXIT" };
 
+
             do
             {
-                Console.WriteLine("Would you like to use add a custom game or use a default game? 'Y' for custom or 'N' for built in");
-                selectCustomOrBuiltIn = Console.ReadLine() ?? string.Empty;
-                // if we select to use a custom game we prompt for the game name
-                if (selectCustomOrBuiltIn.Equals("Y", StringComparison.OrdinalIgnoreCase))
-                {
-                    Console.WriteLine("Please name your game");
-                    gameList.Add(Console.ReadLine() ?? string.Empty);
-                    break;
-                }
-                else if (selectCustomOrBuiltIn.Equals("N", StringComparison.OrdinalIgnoreCase))
-                {
-                    break;
-                }
+                selectCustomOrBuiltIn = ChooseCustomOrBuiltIn(gameList, ref customSelected);
 
-            } while (CustomGame.NotYesOrNO(selectCustomOrBuiltIn));
-
-            do 
-            {
                 Console.WriteLine($"Select the game you wish to play: " +
-                    $"{gameList[0]}, {gameList[1]}, {gameList[2]}, {gameList[3]}, {gameList[4]}, {gameList[5]}, {gameList[6]}, {gameList[7]} MYGAME" + // last element will be the name of the game
+                    $"{gameList[0]}, {gameList[1]}, {gameList[2]}, {gameList[3]}, {gameList[4]}, {gameList[5]}, {gameList[6]}, {gameList[7]}," +
+                    $" MYGAME to select {gameList[gameList.Count - 1]}, if you created one." + // last element will be the name of the game
                     $". Type EXIT to return to main menu");
                 selectGame = Console.ReadLine() ?? string.Empty;
 
@@ -88,7 +74,38 @@ namespace QuizGame.Engines
                         break;
                 }
 
+                if (customSelected) // if custom was selected we remove the custom game so we can add a new custom game, ensure we set it back to false so we do not keep removing list items
+                {
+                    gameList.RemoveAt(gameList.Count - 1);
+                    customSelected = false;
+                }
+
             } while (!exitToMenu);
+        }
+
+        private static string ChooseCustomOrBuiltIn(IList<string> gameList, ref bool argCustomSelected) // ref to save changes
+        {
+            string selectCustomOrBuiltIn;
+            do
+            {
+                Console.WriteLine("Would you like to use add a custom game or use a default game? 'Y' for custom or 'N' for built in");
+                selectCustomOrBuiltIn = Console.ReadLine() ?? string.Empty;
+                // if we select to use a custom game we prompt for the game name
+                if (selectCustomOrBuiltIn.Equals("Y", StringComparison.OrdinalIgnoreCase))
+                {
+                    // name game and make custom selected true
+                    Console.WriteLine("Please name your game");
+                    gameList.Add(Console.ReadLine() ?? string.Empty);
+                    argCustomSelected = true;
+                    break;
+                }
+                else if (selectCustomOrBuiltIn.Equals("N", StringComparison.OrdinalIgnoreCase))
+                {
+                    break;
+                }
+
+            } while (CustomGame.NotYesOrNO(selectCustomOrBuiltIn));
+            return selectCustomOrBuiltIn;
         }
 
         public static void PlayCsharpGame(CSharpQuestionAndAnswer argCsharp, CalculationEngine argCalculation)

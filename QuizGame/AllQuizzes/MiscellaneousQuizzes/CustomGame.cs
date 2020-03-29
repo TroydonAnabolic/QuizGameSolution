@@ -1,21 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace QuizGame.AllQuizzes.MiscellaneousQuizzes
 {
     public class CustomGame
     {
+        public List<string> questionsList = new List<string>();
+        public List<string> answerListCorrect = new List<string>();
+        public List<string> answerListIncorrect1 = new List<string>();
+        public List<string> answerListIncorrect2 = new List<string>();
+        public List<string> answerListIncorrect3 = new List<string>();
         public void SaveSampleFile()
         {
             try
             {
                 // Save sample file to the users comp (5 groups)
-                Console.WriteLine("Would you like to save in a custom location or a default location? Enter 'D' if you want to use the default: C:\\Users\\User\\QuizFolder\\QuizSample.txt" +
+                Console.WriteLine("Would you like to save in a custom location or a default location? Enter 'D' if you want to use the default: C:\\Users\\[User]\\QuizFolder\\[QuizSample.txt]" +
                     "otherwise please write in the file path, in the same format as the sample above");
 
-                string savePath = Console.ReadLine() ?? string.Empty;
+                string savePath = string.Empty;
 
                 string[] lines =
                     {
@@ -27,7 +31,7 @@ namespace QuizGame.AllQuizzes.MiscellaneousQuizzes
                         "This is the first correct answer",
                         "This is the second correct answer",
                         "This is the third correct answer",
-                        "Incorrect Answer List 1, List(has the be the answers that make the second most sense so it can remain when the user selects hint",
+                        "Incorrect Answer List 1 (do not add what is in this bracket - has the be the answers that make the second most sense so it can remain when the user selects hint",
                         "This is the first incorrect answer",
                         "This is the second incorrect answer",
                         "This is the third incorrect answer",
@@ -41,65 +45,32 @@ namespace QuizGame.AllQuizzes.MiscellaneousQuizzes
                         "This is the third incorrect answer",
                     };
 
-                string defaultSavePath = $@"C:\Users\{Environment.UserName}\QuizFolder\QuizSample.txt";
+                //string defaultSavePath = $@"C:\Users\{Environment.UserName}\QuizFolder\QuizSample.txt";
                 string path = string.Empty;
 
-
-
-
-                // If we choose default then we save in default path
-                if (savePath.Equals("D", StringComparison.OrdinalIgnoreCase))
+                while (!File.Exists(savePath)) // keep looping if the file does not exist
                 {
-                  
-                        //  string user = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
-                        do
-                        {
-
-                        // Check that the file doesn't already exist. If it doesn't exist, create
-                        // the file and write integers 0 - 99 to it.
-                        // DANGER: System.IO.File.Create will overwrite the file if it already exists.
-                        // This could happen even with random file names, although it is unlikely.
-                        // Specify the directory you want to manipulate.
-                        String UserName = Application.GetNamespace("MAPI").CurrentUser.Name;
-
-                        path = $@"C:\Users\Public\Public Documents\QuizFolder";
-                        // Try to create the directory.
-                        Directory.CreateDirectory(path);
-                        string fileName = "QuizSample.txt";
-                        // Use Combine again to add the file name to the path.
-                         path = Path.Combine(path, fileName);
-
-                        Console.WriteLine("Path to my file: {0}\n", path);
-
-
-                        if (!File.Exists(path))
-                            {
-
-                                File.WriteAllLines(path, lines);
-                            }
-                            else
-                            {
-                                Console.WriteLine("File \"{0}\" already exists.", fileName);
-                                return;
-                            }
-
-                        } while (!File.Exists(path)); // keep looping until the file path exists
-                    }
-
-                // Otherwise use the written file path
-                else
-                {
-                    while (!File.Exists(savePath)) // keep looping if the file does not exist
+                    savePath = Console.ReadLine() ?? string.Empty;
+                    // Again if we select D we use default
+                    if (savePath.Equals("D", StringComparison.OrdinalIgnoreCase))
                     {
-                        Console.WriteLine("Sorry that path does not exist, please ensure you are formatting file path as the sample above");
-                        savePath = Console.ReadLine() ?? string.Empty;
+                        // if we use the default save path and it exists we break out of loop
+                        path = UseDefaultSaveMethod(lines);
+                        if (File.Exists(path)) break;
                     }
-                    // once we have a valid path we save it
-                    File.WriteAllLines(savePath, lines);
+                    // if we use a path and it exists we break
+                    else if (File.Exists(savePath))
+                    {
+                        File.WriteAllLines(savePath, lines);
+                        break;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Sorry that path does not exist, please ensure you are formatting file path, and ensure the blank doc includes file name " + // TODO: Allow app to create the specified file path
+                            "C:\\Users\\[User]\\QuizFolder\\[QuizSample.txt], please ensure to remove the brackets.\nAlternatively enter 'D' to use the default file storage location");
+                    }
                 }
-
-        }
-
+            }
 
             catch (Exception ex)
             {
@@ -107,10 +78,100 @@ namespace QuizGame.AllQuizzes.MiscellaneousQuizzes
             }
         }
 
-        public void ReadQuizFile(string argFileReadPath)
-        {
+        // returns a list of everything on the file the user has sent
 
+
+        public void ExecuteReadMethod()
+        {
+            try
+            {
+                string readFilePath = string.Empty;
+
+                // TODO: Implement method to add a new item to the array after every space not every line incase of large paragraphs, give option to select option with space or option no space
+                do
+                {
+                    Console.WriteLine("Please supply the file path for the questions and answers you wish to use: Remember to use the proper formatting method for file path");
+                    readFilePath = Console.ReadLine() ?? string.Empty;
+                    // if (File.Exists(readFilePath)) break;
+                } while (!File.Exists(readFilePath));
+
+
+                // store all lines into an array and make it into a list
+                string[] fileContents = File.ReadAllLines(readFilePath);
+
+                string fileText = File.ReadAllText(readFilePath);
+
+                string[] splitText = fileText.Split(new string[] { "\r\n\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+
+                List<string> contentList = new List<string>(fileContents);
+
+                 questionsList = new List<string>();
+                 answerListCorrect = new List<string>();
+                 answerListIncorrect1 = new List<string>();
+                 answerListIncorrect2 = new List<string>();
+                 answerListIncorrect3 = new List<string>();
+
+                // take the list and now we can break it down into compartments
+                for (int i = 0; i < contentList.Count; i++)
+                {
+                    // we can establish question numbers by dividing by 5 and then minusing 5 because there 4 columns: Questions, Correct Answer, Incorrect answer 1, Incorrect answer 2 Incorrect Answer 3
+                    // Therefore there are 5 lists and 5 headings so we only want 1 of the list minus the headings to get the question count, we minus by 1 because we already divided by 5
+                    int numberOfQuestions = contentList.Count / 5 - 1;
+
+                    // we add to the corresponding list depending on the indexes it falls between TODO: check if we leave questions null for some, and implement fix if possible
+                    if (i >= 1 && i < contentList.IndexOf("Correct Answer List"))
+                    {
+                        questionsList.Add(contentList[i]);
+                    }
+                    else if (i > contentList.IndexOf("Correct Answer List") && i < contentList.IndexOf("Incorrect Answer List 1"))
+                    {
+
+                        answerListCorrect.Add(contentList[i]);
+                    }
+                    else if (i > contentList.IndexOf("Incorrect Answer List 1") && i < contentList.IndexOf("Incorrect Answer List 2"))
+                    {
+                        answerListIncorrect1.Add(contentList[i]);
+                    }
+                    else if (i > contentList.IndexOf("Incorrect Answer List 2") && i < contentList.IndexOf("Incorrect Answer List 3"))
+                    {
+                        answerListIncorrect2.Add(contentList[i]);
+                    }
+                    else if (i > contentList.IndexOf("Incorrect Answer List 3") && i < contentList.Count - 1)
+                    {
+                        answerListIncorrect3.Add(contentList[i]);
+                    }
+                }
+            }
+
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
+        private static string UseDefaultSaveMethod(string[] lines)
+        {
+            string path = $@"C:\Users\Public\Public Documents\QuizFolder";
+            // Try to create the directory.
+            Directory.CreateDirectory(path);
+            string fileName = "QuizSample.txt";
+            // Use Combine again to add the file name to the path.
+            path = Path.Combine(path, fileName);
+
+            Console.WriteLine("File created, you can find the path to the sample file: {0}\n", path);
+
+
+            if (!File.Exists(path))
+            {
+
+                File.WriteAllLines(path, lines);
+            }
+            else
+            {
+                Console.WriteLine("File \"{0}\" already exists.", fileName);
+            }
+
+            return path;
+        }
     }
 }

@@ -2,6 +2,7 @@
 using QuizGame.ProgrammingQuizzes;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,7 +14,6 @@ namespace QuizGame.Engines
         // when adding to this list, always enter item just before EXIT element
         public static readonly IList<string> gameList = new List<string> { "HTML", "CSS", "JAVASCRIPT", "C#", "ASP.NET", "SQL", "NETWORKING", "GENERAL", "FILE", "EXIT" }.AsReadOnly();
         public static string selectGame = string.Empty;
-
 
         public void PlayGame(CSharpQuestionAndAnswer argCsharp, GeneralKnowledge argGeneralKnowledge, CustomGame argCustomGame, CalculationEngine argCalculation)
         {
@@ -58,6 +58,7 @@ namespace QuizGame.Engines
                     case "FILE":
                         Console.WriteLine($"{Constants.horizontalRule}Welcome to your (game name goes here)  Game!");
                         PlayCustomGame(argCustomGame, argCalculation);
+
                         break;
                     case "EXIT":
                         Console.WriteLine($"{Constants.horizontalRule}Exited Game!");
@@ -85,10 +86,12 @@ namespace QuizGame.Engines
         }
         public static void PlayCustomGame(CustomGame argCustomGame, CalculationEngine argCalculation)
         {
-            //apply C# argCalculations
+            PlayGameMethods playGameMethods = new PlayGameMethods();
             argCustomGame.SaveSampleFile();
-            //argCalculation.CalculateScore(argCustomGame.questionsList, argCustomGame.answerListCorrect,
-            //    argCustomGame.answerListIncorrect1, argCustomGame.answerListIncorrect2, argCustomGame.answerListIncorrect3);
+            argCustomGame.ExecuteReadMethod();
+
+            argCalculation.CalculateScore(argCustomGame.questionsList, argCustomGame.answerListCorrect,
+                argCustomGame.answerListIncorrect1, argCustomGame.answerListIncorrect2, argCustomGame.answerListIncorrect3);
         }
     }
 }

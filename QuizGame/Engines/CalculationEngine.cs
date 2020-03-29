@@ -20,8 +20,9 @@ namespace QuizGame.Engines
                 bool isEmptyAnswer = false;
                 // TODO: implement timer feature
 
-                List<int> randomListForQuestions = new List<int>(); // create empty  list
-                GenerateRandomNumberList(randomListForQuestions, argQuestions.Count); // fill list with random numbers based on size of questions array
+                List<int> randomListForQuestions = new List<int>();
+                // fill list with random numbers based on size of questions array
+                GenerateRandomNumberList(randomListForQuestions, argQuestions.Count); 
 
 
                 for (int i = 0; i < argQuestions.Count; i++)
@@ -34,7 +35,7 @@ namespace QuizGame.Engines
                         argAnswerListIncorrect2[randomListForQuestions[i]], argAnswerListIncorrect3[randomListForQuestions[i]] };
                     // Creates a list of 4 random numbers in each instance of the questions list
                     List<int> randomList = new List<int>();
-                    // after we have a random list of numbers 1-4, we use it to apply a random index between 1 and 4 to the list of possible answers 
+                    // make random list of 4 numbrtd
                     GenerateRandomNumberList(randomList);
                     // we randomize the index for each of the elements in possible answers
 
@@ -71,7 +72,7 @@ namespace QuizGame.Engines
                                 break;
                         }
                     }
-                    // TODO: Extract method for scoring calculation
+                    
                     Console.WriteLine("\nWhich Option is correct?\n\nEnter '9' if you are stuck, you will lose 0.5 points\n");
 
                     // if possible answer is the correct one then we will increase the score
@@ -83,7 +84,8 @@ namespace QuizGame.Engines
                         Console.WriteLine($"{Constants.horizontalRule}Correct! Your current Score is: {score} out of {argQuestions.Count}{Constants.horizontalRule}");
                     }
 
-                    // if its not the correct option but one of the other options available, incorrect option can only have the values that correct option does not and can only be 1 2 3 or 4
+                    // method to show options available when string is empty
+                    //if its not the correct option but one of the other options available, incorrect option can only have the values that correct option does not and can only be 1 2 3 or 4
                     else if (AnswerOptions(mySelectedOption))
                     {
                         // if the selected answer is empty
@@ -206,7 +208,7 @@ namespace QuizGame.Engines
             return argRandList;
         }
 
-        // Override Random number generator to shuffle the questions order based on number of questions
+        // Override Random number generator to shuffle the questions and answer order based on number of questions
         public static List<int> GenerateRandomNumberList(List<int> argRandList, int argNumberOfQuestions)
         {
             try
